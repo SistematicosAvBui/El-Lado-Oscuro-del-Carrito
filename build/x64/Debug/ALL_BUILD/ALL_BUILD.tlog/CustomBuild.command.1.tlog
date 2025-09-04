@@ -1,0 +1,10 @@
+^C:\USERS\SNTAV\EL_LADO_OSCURO_DEL_CARRITO\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/sntav/el_lado_oscuro_del_carrito -BC:/Users/sntav/el_lado_oscuro_del_carrito/build --check-stamp-file C:/Users/sntav/el_lado_oscuro_del_carrito/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

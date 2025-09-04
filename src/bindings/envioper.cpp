@@ -8,5 +8,5 @@ PYBIND11_MODULE(personaje, m) {
 
     py::class_<Personaje>(m, "Personaje")
         .def(py::init<int, int>())        // Constructor (m, v)
-        .def("gasto", &Personaje::gasto); // Método gasto
+        .def("gasto", &Personaje::gasto); // Mï¿½todo gasto
 }
