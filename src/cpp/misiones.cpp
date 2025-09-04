@@ -30,7 +30,8 @@ public:
             return recompensa; // parte mas importante ya que devuelve los puntasos al player (ojo importante el manejo)
         }
         else {
-            cout << "Ya habías completado esta misión." << endl;
+
+            cout << "Ya habÃ­as completado esta misiÃ³n." << endl;
             return 0;
         }
     }
@@ -43,7 +44,7 @@ public:
 
 
 int main (){
-    mision m1("No comprar innecesario", "Ignora una tentación de compra", 89);
+    mision m1("No comprar innecesario", "Ignora una tentaciÃ³n de compra", 89);
     m1.mostrarmision();
 
     int puntos = m1.completar();
@@ -51,7 +52,7 @@ int main (){
 
     m1.mostrarmision();
 
-    mision m2("Elige lo necesario sobre lo extra", "Entre dos opciones, escoger solo lo útil", 57);
+    mision m2("Elige lo necesario sobre lo extra", "Entre dos opciones, escoger solo lo Ãºtil", 57);
     m2.mostrarmision();
 
     puntos += m2.completar();
@@ -62,3 +63,4 @@ int main (){
 
     return 0;
 }
+
