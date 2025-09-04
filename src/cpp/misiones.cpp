@@ -30,6 +30,7 @@ public:
             return recompensa; // parte mas importante ya que devuelve los puntasos al player (ojo importante el manejo)
         }
         else {
+
             cout << "Ya habías completado esta misión." << endl;
             return 0;
         }
@@ -62,3 +63,4 @@ int main (){
 
     return 0;
 }
+

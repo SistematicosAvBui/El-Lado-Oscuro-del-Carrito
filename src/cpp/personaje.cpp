@@ -1,30 +1,17 @@
+#include "personaje.h"
 #include <iostream>
-#include <stdlib.h>
 using namespace std;
 
-class personaje {
-private:
-    int movimiento;
-    int dinero;
+Personaje::Personaje(int m, int v) {
+    movimiento = m;
+    dinero = 1500; // ignoramos v y usamos dinero fijo como en tu ejemplo
+}
 
-public:
-    personaje(int m, int v) {
-        movimiento = m;
-        dinero = 1500;
+void Personaje::gasto(int cantidad) {
+    if (dinero >= cantidad) {
+        dinero -= cantidad;
     }
-
-    void gasto(int cantidad) {
-        if (dinero >= cantidad) {
-            dinero -= cantidad;
-        }
-        else {
-            cout << "SIN SALDO" << endl;
-        }
+    else {
+        cout << "SIN SALDO" << endl;
     }
-};
-
-int main() {
-    personaje heroe(5, 100);
-
-    return 0;
 }
