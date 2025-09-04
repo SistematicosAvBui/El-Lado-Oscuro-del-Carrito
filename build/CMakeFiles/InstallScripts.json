@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/sbuit/OneDrive/Pictures/defini/build/cmake_install.cmake",
+		"C:/Users/sbuit/OneDrive/Pictures/defini/build/third_party/pybind11/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
