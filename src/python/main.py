@@ -11,7 +11,7 @@ class Juego():
         JUGANDO = "jugando"
         estado = MENU  
 
-        fondo_menu = pygame.image.load("assets/imagen_fondo_principal.jpg")
+        fondo_menu = pygame.image.load("assets/imagen_fondo_principal2.png")
 
         fondo_menu = pygame.transform.scale(fondo_menu, (1200, 600)) 
 
