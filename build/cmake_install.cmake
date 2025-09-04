@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/sntav/el_lado_oscuro_del_carrito
+# Install script for directory: C:/Users/sbuit/OneDrive/Pictures/defini
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,14 +34,14 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Users/sntav/el_lado_oscuro_del_carrito/build/third_party/pybind11/cmake_install.cmake")
+  include("C:/Users/sbuit/OneDrive/Pictures/defini/build/third_party/pybind11/cmake_install.cmake")
 
 endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "C:/Users/sntav/el_lado_oscuro_del_carrito/build/install_local_manifest.txt"
+  file(WRITE "C:/Users/sbuit/OneDrive/Pictures/defini/build/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
 if(CMAKE_INSTALL_COMPONENT)
@@ -57,6 +57,6 @@ else()
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "C:/Users/sntav/el_lado_oscuro_del_carrito/build/${CMAKE_INSTALL_MANIFEST}"
+  file(WRITE "C:/Users/sbuit/OneDrive/Pictures/defini/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
