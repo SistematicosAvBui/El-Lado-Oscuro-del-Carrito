@@ -15,6 +15,8 @@ endif()
 # Añadir pybind11 desde third_party
 add_subdirectory(third_party/pybind11)
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/third_party/pybind11/include)
+
 # Carpeta con archivos .h/.hpp
 include_directories(src/include)
 
