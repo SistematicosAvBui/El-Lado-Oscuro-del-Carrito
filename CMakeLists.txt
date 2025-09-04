@@ -18,7 +18,10 @@ add_subdirectory(third_party/pybind11)
 # Carpeta con archivos .h/.hpp
 include_directories(src/include)
 
-# Guardar rutas de los .cpp
-file(GLOB_RECURSE CPP_SOURCES src/cpp/*.cpp)
-file(GLOB_RECURSE BINDINGS_SOURCES src/bindings/*.cpp)
+set(PERSONAJE_SOURCES
+    src/cpp/personaje.cpp
+    src/bindings/envioper.cpp
+)
+# Crear módulo pybind11 SOLO para personaje
+pybind11_add_module(personaje ${PERSONAJE_SOURCES})
 
