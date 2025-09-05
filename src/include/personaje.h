@@ -2,11 +2,10 @@
 #define PERSONAJE_H
 
 class Personaje {
-private:
+public:
     int movimiento;
     int dinero;
 
-public:
     Personaje(int m, int v);
 
     void gasto(int cantidad);
