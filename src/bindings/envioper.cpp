@@ -14,15 +14,9 @@ PYBIND11_MODULE(personaje, m) {
         .def("gasto", &Personaje::gasto, py::arg("cantidad"),
             "Descuenta una cantidad de dinero si hay saldo suficiente")
 
-        // Propiedad movimiento
-        .def_property("movimiento",
-            [](const Personaje& p) { return p.movimiento; },
-            [](Personaje& p, int value) { p.movimiento = value; },
-            "Atributo que representa el movimiento del personaje")
-
-        // Propiedad dinero
-        .def_property("dinero",
-            [](const Personaje& p) { return p.dinero; },
-            [](Personaje& p, int value) { p.dinero = value; },
+        // Atributos expuestos directamente
+        .def_readwrite("movimiento", &Personaje::movimiento,
+            "Atributo público que representa el movimiento del personaje")
+        .def_readwrite("dinero", &Personaje::dinero,
             "Cantidad de dinero del personaje");
 }
