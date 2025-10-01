@@ -1,4 +1,4 @@
-import pygame
+'''import pygame
 from compilados_py.Release import personaje as per  # tu binding en C++
 
 class Personajes(per.Personaje):
@@ -69,4 +69,5 @@ class NPC(Personajes):
     def interaccion(self):
         print("NPC: Te estoy siguiendo 👀")
 
+'''
 

@@ -2,5 +2,7 @@ build
 .vs
 out
 __pycache__
+personaje2.py 
+pruebas_main.py
 
 

@@ -1,4 +1,4 @@
-import pygame
+'''import pygame
 from personaje2 import Protagonista, NPC
 
 class Juego():
@@ -66,3 +66,4 @@ class Juego():
 if __name__ == "__main__":
     juego = Juego()
     juego.ejecucion_juego()
+    '''
