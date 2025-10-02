@@ -1,70 +1,47 @@
 import pygame
-from personaje2 import Protagonista, NPC
+import sys
+import personajes as per
 
-class Juego():
-    def __init__(self):
-        pygame.init()
-        self.pantalla = pygame.display.set_mode((1200, 600))
-        pygame.display.set_caption("El Lado Oscuro del Carrito")
-        self.tasa_f = pygame.time.Clock()
+pygame.init()
+values = (1200, 600)
+screen = pygame.display.set_mode(values)
+pygame.display.set_caption("El Lado Oscuro del Carrito")
+clock = pygame.time.Clock()
+def cargar_animaciones():
+    """Carga todas las animaciones del personaje"""
+    animaciones = []
+    try:
+        # Intentar cargar frames 0-6 (7 frames total)
+        for frame in range(7):
+            img = pygame.image.load(f"assets/{frame}-Photoroom.png")
+            img = pygame.transform.scale(img, (150, 175))
+            animaciones.append(img)
+    except pygame.error:
+        # Si no se pueden cargar las animaciones, usar una imagen por defecto
+        print("No se pudieron cargar las animaciones, usando imagen por defecto")
+        img = pygame.image.load("assets/2-Photoroom.png")
+        img = pygame.transform.scale(img, (150, 175))
+        animaciones = [img] * 7  # Repetir la misma imagen
+    
+    return animaciones
 
-        # Fondos
-        self.fondo_menu = pygame.image.load("assets/imagen_fondo_principal2.png")
-        self.fondo_menu = pygame.transform.scale(self.fondo_menu, (1200, 600))
+animaciones = cargar_animaciones()
+jugador = per.Protagonista(0, 1500, animaciones, 100, 300, 5)
+fondo_menu = pygame.image.load("assets/imagen_fondo_principal.jpg")
+fondo_menu = pygame.transform.scale(fondo_menu, (1200, 600))
 
-        self.fondo_nivel = pygame.image.load("assets/imagen_nivel.jpg").convert()
-        self.fondo_nivel = pygame.transform.scale(self.fondo_nivel, (1200, 600))
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            print(event.type)
+            sys.exit()
 
-        # Personajes con sprites (si no existen las imágenes, se verán como rectángulos)
-        self.jugador = Protagonista(
-            100, 100, 3, 40, 60, "assets/Imagen_prota_cam_izquierda-removebg-preview.png"
-        )
-        self.npc = NPC(
-            400, 300, 2, 40, 60, "assets/Imagen_prepuncho.png"
-        )
+    screen.blit(fondo_menu, (0, 0))
+    jugador.movimiento()
+    jugador.dibujar(screen)
+    
+    
 
-    def ejecucion_juego(self):
-        MENU = "menu"
-        JUGANDO = "jugando"
-        estado = MENU
-
-        corriendo = True
-        while corriendo:
-            for evento in pygame.event.get():
-                if evento.type == pygame.QUIT:
-                    print(evento.type)
-                    corriendo = False
-
-                if estado == MENU:
-                    if evento.type == pygame.KEYDOWN and evento.key == pygame.K_RETURN:
-                        estado = JUGANDO
-                    if evento.type == pygame.MOUSEBUTTONDOWN:
-                        x, y = pygame.mouse.get_pos()
-                        if 500 <= x <= 650 and 450 <= y <= 520:
-                            estado = JUGANDO
-
-            if estado == MENU:
-                self.pantalla.fill((0, 0, 0))
-                self.pantalla.blit(self.fondo_menu, (0, 0))
-
-            elif estado == JUGANDO:
-                self.pantalla.blit(self.fondo_nivel, (0, 0))
-
-                # Movimiento jugador
-                self.jugador.movimiento_jugador()
-                self.jugador.draw(self.pantalla, color=(250, 0, 0))
-
-                # NPC sigue al jugador
-                self.npc.seguir(self.jugador)
-                self.npc.draw(self.pantalla, color=(0, 0, 250))
-
-            pygame.display.update()
-            self.tasa_f.tick(60)
-
-        pygame.quit()
-
-
-if __name__ == "__main__":
-    juego = Juego()
-    juego.ejecucion_juego()
+    pygame.display.update()
+    clock.tick(60)
 
