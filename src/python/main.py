@@ -1,6 +1,7 @@
 import pygame
 import sys
 import personajes as per
+import time
 
 pygame.init()
 values = (1200, 600)
@@ -9,7 +10,7 @@ pygame.display.set_caption("El Lado Oscuro del Carrito")
 clock = pygame.time.Clock()
 aparicion_x, aparicion_y = 250, 350
 hitbox_values = [(0, 0, 265, 220), (270, 0, 240, 150), (790, 0, 780, 360), (0, 600 - 215, 220, 225), (220, 600 -70, 800, 35), (1000, 600 - 155, 200, 165) ]
-    
+dinero = 1500
 
 def cargar_animaciones():
     """Carga todas las animaciones del personaje"""
@@ -30,7 +31,7 @@ def cargar_animaciones():
     return animaciones
 
 animaciones = cargar_animaciones()
-jugador = per.Protagonista(0, 1500, animaciones, aparicion_x, aparicion_y, 5)
+jugador = per.Protagonista(0, dinero, animaciones, aparicion_x, aparicion_y, 5)
 
 # Fondos
 fondo_menu = pygame.image.load("assets/imagen_fondo_principal.jpg")
@@ -44,12 +45,12 @@ MENU = "menu"
 JUGANDO = "jugando"
 estado_actual = MENU
 
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             print(event.type)
             sys.exit()
-        
         # Cambiar estado con Enter
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
             if estado_actual == MENU:

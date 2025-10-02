@@ -109,3 +109,16 @@ class Protagonista (per.Personaje):
             imagen_flip = pygame.transform.flip(current_frame, self.flip_x, self.flip_y)
             
         interfaz.blit(imagen_flip, (self.eje_x, self.eje_y))
+
+class NPC (per.Personaje):
+    #clase que crea un NPC
+    def __init__ (self, movimiento, dinero, eje_x, eje_y, dialogos):
+        super().__init__(movimiento, dinero)
+        self.eje_x = eje_x
+        self.eje_y = eje_y
+        self.dialogos = dialogos
+        self.rect = pygame.Rect(eje_x, eje_y, 105, 165)
+
+    def dialogo (self, dialogo):
+        pass
+    
