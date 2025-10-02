@@ -1,55 +1,68 @@
-import pygame 
-import personaje as per
+import pygame
+import sys
+import personajes as per
 
-class Juego():
-    def ejecucion_juego(self):
-        pygame.init()
-        pantalla = pygame.display.set_mode((1200, 600))
-        tasa_f = pygame.time.Clock()
+pygame.init()
+values = (1200, 600)
+screen = pygame.display.set_mode(values)
+pygame.display.set_caption("El Lado Oscuro del Carrito")
+clock = pygame.time.Clock()
+def cargar_animaciones():
+    """Carga todas las animaciones del personaje"""
+    animaciones = []
+    try:
+        # Intentar cargar frames 0-6 (7 frames total)
+        for frame in range(7):
+            img = pygame.image.load(f"assets/{frame}-Photoroom.png")
+            img = pygame.transform.scale(img, (150, 175))
+            animaciones.append(img)
+    except pygame.error:
+        # Si no se pueden cargar las animaciones, usar una imagen por defecto
+        print("No se pudieron cargar las animaciones, usando imagen por defecto")
+        img = pygame.image.load("assets/2-Photoroom.png")
+        img = pygame.transform.scale(img, (150, 175))
+        animaciones = [img] * 7  # Repetir la misma imagen
+    
+    return animaciones
 
-        MENU = "menu"
-        JUGANDO = "jugando"
-        estado = MENU  
+animaciones = cargar_animaciones()
+jugador = per.Protagonista(0, 1500, animaciones, 250, 350, 5)
 
-        fondo_menu = pygame.image.load("assets/imagen_fondo_principal2.png")
+# Fondos
+fondo_menu = pygame.image.load("assets/imagen_fondo_principal.jpg")
+fondo_menu = pygame.transform.scale(fondo_menu, (1200, 600))
 
-        fondo_menu = pygame.transform.scale(fondo_menu, (1200, 600)) 
+fondo_nivel = pygame.image.load("assets/imagen_nivel.jpg")
+fondo_nivel = pygame.transform.scale(fondo_nivel, (1200, 600))
 
-        jugador = per.Jugador(100, 100, 3, 30, 50)
+# Estados del juego
+MENU = "menu"
+JUGANDO = "jugando"
+estado_actual = MENU
 
-        corriendo = True
-        while corriendo:
-            for evento in pygame.event.get():
-                if evento.type == pygame.QUIT:
-                    corriendo = False
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            print(event.type)
+            sys.exit()
+        
+        # Cambiar estado con Enter
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            if estado_actual == MENU:
+                estado_actual = JUGANDO
+            elif estado_actual == JUGANDO:
+                estado_actual = MENU
 
-                if estado == MENU:
-                    if evento.type == pygame.KEYDOWN and evento.key == pygame.K_RETURN:
-                        estado = JUGANDO
-                    if evento.type == pygame.MOUSEBUTTONDOWN:  
-                        x, y = pygame.mouse.get_pos()
-                        if 500 <= x <= 650 and 450 <= y <= 520:  
-                            estado = JUGANDO
-            if estado == MENU:
-                pantalla.blit(fondo_menu, (0, 0)) 
-
-            elif estado == JUGANDO:
-                pantalla.fill((0, 0, 0))  
-
-                jugador.movimiento_jugador()
-                pygame.draw.rect(
-                    pantalla, 
-                    (250, 0, 0),
-                    (jugador.eje_x, jugador.eje_y, jugador.ancho, jugador.alto)
-                )
-
-            pygame.display.update()
-            tasa_f.tick(30)
-            pygame.display.set_caption("El Lado Oscuro del Carrito")
-
-        pygame.quit()
-
-el_lado_oscuro = Juego()
-el_lado_oscuro.ejecucion_juego()
-
+    # Dibujar según el estado actual
+    if estado_actual == MENU:
+        screen.blit(fondo_menu, (0, 0))
+        # No dibujar el personaje en el menú
+    elif estado_actual == JUGANDO:
+        screen.blit(fondo_nivel, (0, 0))
+        # Solo mover y dibujar el personaje cuando se está jugando
+        jugador.movimiento()
+        jugador.dibujar(screen)
+    
+    pygame.display.update()
+    clock.tick(60)
 
