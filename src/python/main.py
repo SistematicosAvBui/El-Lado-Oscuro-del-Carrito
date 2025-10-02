@@ -1,55 +1,38 @@
-import pygame 
-import personaje as per
+import pygame
+import sys
+import personajes as per
 
-class Juego():
-    def ejecucion_juego(self):
-        pygame.init()
-        pantalla = pygame.display.set_mode((1200, 600))
-        tasa_f = pygame.time.Clock()
+pygame.init()
+values = (1200, 600)
+screen = pygame.display.set_mode(values)
+pygame.display.set_caption("El Lado Oscuro del Carrito")
+clock = pygame.time.Clock()
+def actualizar_animacion (comienzo_iteracion, indice_animacion):
+    animaciones = []
+    for frame in range(comienzo_iteracion, indice_animacion):
+        img = pygame.image.load(f"assets/{frame}-Photoroom.png")
+        img = pygame.transform.scale(img, (150, 175))
+        animaciones.append(img)
+    return animaciones
+imagen = actualizar_animacion(0, 7)
+jugador = per.Protagonista(0, 1500, imagen, 100, 300, 5)
+fondo_menu = pygame.image.load("assets/imagen_fondo_principal.jpg")
+fondo_menu = pygame.transform.scale(fondo_menu, (1200, 600))
 
-        MENU = "menu"
-        JUGANDO = "jugando"
-        estado = MENU  
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            print(event.type)
+            sys.exit()
 
-        fondo_menu = pygame.image.load("assets/imagen_fondo_principal2.png")
+    screen.blit(fondo_menu, (0, 0))
+    jugador.movimiento()
+    jugador.dibujar(screen)
+    
+    
 
-        fondo_menu = pygame.transform.scale(fondo_menu, (1200, 600)) 
+    pygame.display.update()
+    clock.tick(60)
 
-        jugador = per.Jugador(100, 100, 3, 30, 50)
-
-        corriendo = True
-        while corriendo:
-            for evento in pygame.event.get():
-                if evento.type == pygame.QUIT:
-                    corriendo = False
-
-                if estado == MENU:
-                    if evento.type == pygame.KEYDOWN and evento.key == pygame.K_RETURN:
-                        estado = JUGANDO
-                    if evento.type == pygame.MOUSEBUTTONDOWN:  
-                        x, y = pygame.mouse.get_pos()
-                        if 500 <= x <= 650 and 450 <= y <= 520:  
-                            estado = JUGANDO
-            if estado == MENU:
-                pantalla.blit(fondo_menu, (0, 0)) 
-
-            elif estado == JUGANDO:
-                pantalla.fill((0, 0, 0))  
-
-                jugador.movimiento_jugador()
-                pygame.draw.rect(
-                    pantalla, 
-                    (250, 0, 0),
-                    (jugador.eje_x, jugador.eje_y, jugador.ancho, jugador.alto)
-                )
-
-            pygame.display.update()
-            tasa_f.tick(30)
-            pygame.display.set_caption("El Lado Oscuro del Carrito")
-
-        pygame.quit()
-
-el_lado_oscuro = Juego()
-el_lado_oscuro.ejecucion_juego()
-
+        
 

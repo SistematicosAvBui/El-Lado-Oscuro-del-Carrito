@@ -1,4 +1,4 @@
-'''import pygame
+import pygame
 from personaje2 import Protagonista, NPC
 
 class Juego():
@@ -17,10 +17,10 @@ class Juego():
 
         # Personajes con sprites (si no existen las imágenes, se verán como rectángulos)
         self.jugador = Protagonista(
-            100, 100, 3, 40, 60, "assets/imagen_jugador.png"
+            100, 100, 3, 40, 60, "assets/Imagen_prota_cam_izquierda-removebg-preview.png"
         )
         self.npc = NPC(
-            400, 300, 2, 40, 60, "assets/imagen_prepuncho.png"
+            400, 300, 2, 40, 60, "assets/Imagen_prepuncho.png"
         )
 
     def ejecucion_juego(self):
@@ -32,6 +32,7 @@ class Juego():
         while corriendo:
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
+                    print(evento.type)
                     corriendo = False
 
                 if estado == MENU:
@@ -66,4 +67,4 @@ class Juego():
 if __name__ == "__main__":
     juego = Juego()
     juego.ejecucion_juego()
-    '''
+
