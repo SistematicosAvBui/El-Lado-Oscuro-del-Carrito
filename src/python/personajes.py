@@ -1,6 +1,5 @@
 import pygame
 from compilados_py.Release import personaje as per
-
 class Protagonista (per.Personaje):
     #Clase que se encarga de generar el personaje jugable:
     #Recibe movimiento, dinero, imagen de Sprite, posicion en X y Y, Velocidad
@@ -11,6 +10,9 @@ class Protagonista (per.Personaje):
         self.velocidad = velocidad
         self.flip_x = False
         self.flip_y = False
+        
+        # Rectángulo de colisión del jugador
+        self.rect = pygame.Rect(eje_x, eje_y, 105, 165)
         
         # Sistema de animaciones
         self.animaciones = animaciones
@@ -52,9 +54,13 @@ class Protagonista (per.Personaje):
             return self.animaciones[frame_list[self.frame_index]]
         return self.animaciones[0]  # Frame por defecto
 
-    def movimiento (self):
+    def movimiento (self, obstaculos=None):
         teclas = pygame.key.get_pressed()
         current_direction = "idle"
+        
+        # Guardar posición actual
+        old_x = self.eje_x
+        old_y = self.eje_y
         
         # Detectar dirección de movimiento
         if teclas[pygame.K_w]:
@@ -71,6 +77,21 @@ class Protagonista (per.Personaje):
             self.eje_x += self.velocidad
             self.flip_x = False
             current_direction = "right"
+        
+        # Actualizar rectángulo de colisión
+        self.rect.x = self.eje_x
+        self.rect.y = self.eje_y
+        
+        # Verificar colisiones si se proporcionan obstáculos
+        if obstaculos:
+            for obstaculo in obstaculos:
+                if self.rect.colliderect(obstaculo):
+                    # Revertir movimiento si hay colisión
+                    self.eje_x = old_x
+                    self.eje_y = old_y
+                    self.rect.x = self.eje_x
+                    self.rect.y = self.eje_y
+                    break
         
         # Cambiar animación según la dirección
         self.set_animation(current_direction)
