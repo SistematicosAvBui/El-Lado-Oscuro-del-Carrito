@@ -71,8 +71,9 @@ while True:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
             if estado_actual == MENU:
                 estado_actual = JUGANDO
-            elif estado_actual == JUGANDO:
-                estado_actual = MENU
+        if event.type == pygame.K_ESCAPE:
+                if estado_actual == JUGANDO:
+                    estado_actual = MENU
 
         # --- INTERACCIÓN CON NPC ---
         if estado_actual == JUGANDO and event.type == pygame.KEYDOWN:
