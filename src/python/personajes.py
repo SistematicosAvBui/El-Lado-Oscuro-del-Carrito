@@ -117,8 +117,8 @@ class NPC (per.Personaje):
         self.eje_x = eje_x
         self.eje_y = eje_y
         self.dialogos = dialogos
-        self.rect = pygame.Rect(eje_x, eje_y, 120, 180)
         self.sprite = sprite
+        self.rect = self.sprite.get_rect(topleft = (eje_x, eje_y))
 
     def dialogo (self, dialogo, entrada, personaje):
         if (entrada[pygame.K_e]) and (self.rect.colliderect(personaje.rect)):
