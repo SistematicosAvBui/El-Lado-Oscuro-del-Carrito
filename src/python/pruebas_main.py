@@ -3,6 +3,7 @@ import sys
 import personaje2 as per
 import colisiones
 import textos
+import cambio_escenarios as tel
 
 # --- CONFIGURACIÓN BÁSICA ---
 pygame.init()
@@ -43,11 +44,13 @@ hitboxes = [
     pygame.Rect(1115, 650, 290, 240),  # Edificio del Banco
 ]
 
+# -- Zona Teleport
+
 teleports = [
-    pygame.Rect(605, 470, 80, 20),
-    pygame.Rect(1200, 470, 70, 20),
-    pygame.Rect(605, 900, 80, 20),
-    pygame.Rect(1200, 890, 110, 20)
+    tel.ZonaTeleport(605, 470, 80, 20, None),
+    tel.ZonaTeleport(1200, 470, 70, 20, None),
+    tel.ZonaTeleport(605, 900, 80, 20, None),
+    tel.ZonaTeleport(1200, 890, 110, 20, None),
 ]
 
 # --- Sistema de colisiones ---
@@ -79,6 +82,11 @@ dialogo_en_progreso = False
 
 # --- CÁMARA ---
 camara = pygame.Vector2(0, 0)
+
+# --- SISTEMA DE TELETRANSPORTE ---
+
+scenary_switch = tel.Teletransporte (teleports)
+
 
 # --- LOOP PRINCIPAL ---
 while True:
@@ -172,6 +180,12 @@ while True:
             for rect in teleports:
                 r = pygame.Rect(rect.x - camara.x, rect.y - camara.y, rect.width, rect.height)
                 pygame.draw.rect(screen, (0, 255, 0), r, 2)
+
+        # Identificamos el teleport 
+        delta_time = clock.get_time
+        nuevo_fondo = scenary_switch.deteccion(jugador, hitboxes, delta_time)
+        if nuevo_fondo:
+            fondo_nivel = nuevo_fondo
 
         # --- MOSTRAR "E" ---
         if jugador.rect.colliderect(vendedor.rect.inflate(20, 20)):
