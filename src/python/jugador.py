@@ -1,7 +1,5 @@
 import pygame
 from compilados_py.Release import personaje as per
-import textos as tx
-
 class Protagonista (per.Personaje):
     #Clase que se encarga de generar el personaje jugable:
     #Recibe movimiento, dinero, imagen de Sprite, posicion en X y Y, Velocidad
@@ -13,8 +11,8 @@ class Protagonista (per.Personaje):
         self.flip_x = False
         self.flip_y = False
         
-        # Rectángulo de colisión del jugador, importantisimo para todo el juego
-        self.rect = pygame.Rect(eje_x, eje_y, 105, 165)
+        # Rectángulo de colisión del jugador
+        self.rect = pygame.Rect(eje_x, eje_y, 95, 145)
         
         # Sistema de animaciones
         self.animaciones = animaciones
@@ -33,7 +31,7 @@ class Protagonista (per.Personaje):
         }
 
     def update_animation(self):
-        #Actualiza la animación basada en el tiempo
+        """Actualiza la animación basada en el tiempo"""
         current_time = pygame.time.get_ticks()
         if current_time - self.last_update > self.animation_speed * 1000:
             self.frame_index += 1
@@ -44,13 +42,13 @@ class Protagonista (per.Personaje):
                 self.frame_index = 0
     
     def set_animation(self, animation_name):
-        #Cambia el estado de animación
+        """Cambia el estado de animación"""
         if animation_name != self.current_animation:
             self.current_animation = animation_name
             self.frame_index = 0
     
     def get_current_frame(self):
-        #Obtiene el frame actual de la animación
+        """Obtiene el frame actual de la animación"""
         frame_list = self.animation_states[self.current_animation]
         if frame_list:
             return self.animaciones[frame_list[self.frame_index]]
@@ -101,52 +99,15 @@ class Protagonista (per.Personaje):
         # Actualizar animación
         self.update_animation()
 
-    def interaccion_npc (self, hablar, texto):
-        key = pygame.key.get_pressed
-        if key[pygame.k_e]:
-            hablar(texto)
-
-            
-
-    def dibujar (self, interfaz):
+    def dibujar(self, interfaz, camara):
         current_frame = self.get_current_frame()
-        
+    
         # Aplicar flip horizontal para las animaciones de izquierda
         if self.current_animation == "left":
             imagen_flip = pygame.transform.flip(current_frame, True, self.flip_y)
         else:
             imagen_flip = pygame.transform.flip(current_frame, self.flip_x, self.flip_y)
-            
-        interfaz.blit(imagen_flip, (self.eje_x, self.eje_y))
+        
+        interfaz.blit(imagen_flip, (self.rect.x - camara.x, self.rect.y - camara.y))
 
-class NPC (per.Personaje):
-    #clase que crea un NPC
-    def __init__ (self, movimiento, dinero, eje_x, eje_y, dialogos, sprite):
-        super().__init__(movimiento, dinero)
-        self.eje_x = eje_x
-        self.eje_y = eje_y
-        self.dialogos = dialogos
-        self.rect = pygame.Rect(eje_x, eje_y, 105, 165)
-        self.sprite = sprite
-        self.hablando = False
-
-    def interaccion(self, entrada, personaje, texto):
-    # Si el jugador presiona E y está cerca, iniciar diálogo
-        if (entrada[pygame.K_e]) and (self.rect.colliderect(personaje.rect)):
-            if not self.hablando:
-                self.hablando = True
-                self.dialogo_actual = tx.Dialogo(self.dialogos, texto.fuente, 50, 450, 700, 120)
     
-    # Si ya está hablando, mostrar el diálogo
-        if self.hablando:
-            self.dialogo_actual.actualizar(pygame.time.get_ticks())
-            self.dialogo_actual.dibujar(texto.pantalla)
-
-        # Permitir avanzar con espacio
-        if entrada[pygame.K_SPACE]:
-            self.dialogo_actual.siguiente_linea()
-            if not self.dialogo_actual.en_dialogo:
-                self.hablando = False
-
-    def dibujar (self, surface):
-        surface.blit(self.sprite, self.rect)

@@ -12,7 +12,7 @@ class Protagonista (per.Personaje):
         self.flip_y = False
         
         # Rectángulo de colisión del jugador
-        self.rect = pygame.Rect(eje_x, eje_y, 105, 165)
+        self.rect = pygame.Rect(eje_x, eje_y, 80, 120)
         
         # Sistema de animaciones
         self.animaciones = animaciones
