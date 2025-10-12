@@ -2,9 +2,6 @@ import pygame
 
 class Teletransporte:
     def __init__(self, cambios: list):
-        """
-        cambios: lista de objetos con atributo .rect y .destino (ruta del fondo)
-        """
         self.cambios = cambios
         self.cooldown = 0  # en milisegundos
 

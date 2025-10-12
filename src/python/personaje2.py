@@ -3,13 +3,19 @@ from compilados_py.Release import personaje as per
 class Protagonista (per.Personaje):
     #Clase que se encarga de generar el personaje jugable:
     #Recibe movimiento, dinero, imagen de Sprite, posicion en X y Y, Velocidad
-    def __init__ (self, movimiento, dinero, animaciones, eje_x, eje_y, velocidad):
+    def __init__ (self, movimiento, dinero, animaciones, eje_x, eje_y, velocidad, inventario):
         super().__init__(movimiento, dinero)
         self.eje_x = eje_x
         self.eje_y = eje_y
         self.velocidad = velocidad
         self.flip_x = False
         self.flip_y = False
+        self.inventario = inventario
+        self.estados = { "recreacion" : 100,
+                         "alimentacion" : 100, 
+                         "aceptacion_social": 100,  
+        }
+        self.minimalista = False
         
         # Rectángulo de colisión del jugador
         self.rect = pygame.Rect(eje_x, eje_y, 80, 120)
@@ -98,6 +104,20 @@ class Protagonista (per.Personaje):
         
         # Actualizar animación
         self.update_animation()
+
+
+    def cambio_necesidades (self):
+        tiempo_actual = pygame.time.get_ticks()
+        if tiempo_actual - self.last_update >= 10000:
+            for nombre_estado, valor_estado in self.estados.items():
+                self.estados[nombre_estado] -= 1
+
+            
+    def abribr_inventario (self, inventario, surface, interfaz):
+        key = pygame.key.get_pressed()
+        if key[pygame.K_m]:
+            inventario.abrir_inventario(surface, interfaz)
+
 
     def dibujar(self, interfaz, camara):
         current_frame = self.get_current_frame()

@@ -1,7 +1,7 @@
 import pygame
 import sys
 import jugador as per, npc 
-import textos
+import dialogos
 import time
 
 pygame.init()
@@ -79,7 +79,7 @@ while True:
         if estado_actual == JUGANDO and event.type == pygame.KEYDOWN:
             if event.key == pygame.K_e and jugador.rect.colliderect(vendedor.rect):
                 if not dialogo_en_progreso:
-                    dialogo_activo = textos.Dialogo(
+                    dialogo_activo = dialogos.Dialogo(
                         vendedor.dialogos, fuente_dialogo, 100, 450, 1000, 120
                     )
                     dialogo_en_progreso = True

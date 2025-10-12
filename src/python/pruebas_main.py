@@ -1,7 +1,7 @@
 import pygame, sys
 import personaje2 as per
 import colisiones, cambio_escenarios as tel
-import textos, dialogos_juego as dialogo
+import dialogos as dialogos, dialogos_juego as dialogo
 
 # --- CONFIGURACIÓN BÁSICA ---
 pygame.init()
@@ -40,6 +40,8 @@ hitboxes = [
     pygame.Rect(1115, 230, 245, 250),  # Edificio superior derecho
     pygame.Rect(530, 680, 230, 220),   # Edificio de la Tienda
     pygame.Rect(1115, 650, 290, 240),  # Edificio del Banco
+    pygame.Rect(),
+    pygame.Rect()
 ]
 
 # -- Zona Teleport
@@ -49,6 +51,8 @@ teleports = [
     tel.ZonaTeleport(1200, 470, 70, 20, None),
     tel.ZonaTeleport(605, 900, 80, 20, None),
     tel.ZonaTeleport(1200, 890, 110, 20, None),
+    tel.ZonaTeleport(),
+    tel.ZonaTeleport()
 ]
 
 # --- Sistema de colisiones ---
@@ -102,7 +106,7 @@ while True:
             if estado_actual == JUGANDO:
                 if event.key == pygame.K_e and jugador.rect.colliderect(vendedor.rect):
                     if not dialogo_en_progreso:
-                        dialogo_activo = textos.Dialogo(
+                        dialogo_activo = dialogos.Dialogo(
                             vendedor.dialogos, fuente_dialogo, 100, 450, 1000, 120
                         )
                         dialogo_en_progreso = True
