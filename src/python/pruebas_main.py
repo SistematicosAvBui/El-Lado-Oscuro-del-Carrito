@@ -1,9 +1,7 @@
-import pygame
-import sys
+import pygame, sys
 import personaje2 as per
-import colisiones
-import textos
-import cambio_escenarios as tel
+import colisiones, cambio_escenarios as tel
+import textos, dialogos_juego as dialogo
 
 # --- CONFIGURACIÓN BÁSICA ---
 pygame.init()
@@ -65,13 +63,8 @@ estado_actual = MENU
 fuente_dialogo = pygame.font.Font(None, 32)
 fuente_interaccion = pygame.font.Font(None, 40)
 
-# --- NPC ---
-dialogos_vendedor = [
-    "¡Hola, joven consumidor!",
-    "Parece que tienes dinero fresco...",
-    "Aquí todo está en oferta... aunque no por mucho tiempo.",
-    "Recuerda: ¡comprar es invertir en la felicidad del sistema!"
-]
+dialogos_vendedor = dialogo.dialogos_vendedor
+
 imagen_vendedor = pygame.image.load("assets/imagen_vendedor.png").convert_alpha()
 sprite_vendedor = pygame.transform.scale(imagen_vendedor, (100, 120))
 vendedor = per.NPC(0, 9999, 600, 820, dialogos_vendedor, sprite_vendedor)

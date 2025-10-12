@@ -17,7 +17,7 @@ class Teletransporte:
             return None
 
         for tp in self.cambios:
-            if tp.colliderect(jugador.rect):
+            if tp.rect.colliderect(jugador.rect):
                 # Cambiar fondo y limpiar obstáculos
                 nuevo_fondo = pygame.image.load(tp.destino).convert_alpha()
                 obstaculos.clear()
@@ -32,6 +32,6 @@ class Teletransporte:
 
 class ZonaTeleport ():
     def __init__ (self, x, y, width, height, destino):
-        self.rect = pygame.rect(x, y, width, height)
+        self.rect = pygame.Rect(x, y, width, height)
         self.destino = destino
 
