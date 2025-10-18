@@ -1,9 +1,10 @@
-# pruebas_main.py
+# pruebas_main.py - VERSIÓN CORREGIDA COMPLETA
 """
 Pruebas / main consolidado - Pre-Alpha v0.1 -> con crisis e inflación
 - 4 NPCs: Comerciante (vendedor), Juan (consumista), Pedro (inversor), Juana (civil)
 - Crisis económica: si compras mucho, ingreso pasivo baja y NPCs te culpan
 - Inflación: cada compra incrementa el precio del ítem en 2%
+- FIXES: Inventario seguro, UI responsive, validaciones completas
 """
 import pygame, sys, os, random, time
 import math
@@ -13,7 +14,8 @@ import dialogos as dialogos_mod
 from inventario import Inventario
 from ui import UI
 from tienda import Tienda, Item
-import traceback # Añadido para el manejo seguro de errores
+from notificaciones import SistemaNotificaciones
+import traceback
 
 pygame.init()
 VALUES = (1200, 600)
@@ -25,51 +27,36 @@ ASSETS = "assets"
 
 # ====================================================================
 # [1] FUNCIÓN DE RUTA DE PYINSTALLER
-#     Mantiene la lógica de PyInstaller oculta.
 # ====================================================================
 
 def _obtener_ruta_absoluta(ruta_relativa):
-    """
-    Función interna para obtener la ruta absoluta, compatible con PyInstaller.
-    """
+    """Función interna para obtener la ruta absoluta, compatible con PyInstaller."""
     if hasattr(sys, '_MEIPASS'):
-        # En ejecutable, usa la ruta temporal.
         return os.path.join(sys._MEIPASS, ruta_relativa)
-    
-    # En desarrollo, usa la ruta relativa normal.
     return ruta_relativa
 
-
 # ====================================================================
-# [2] FUNCIONES DE CARGA MODIFICADAS (SOLUCIÓN DE ASSETS)
+# [2] FUNCIONES DE CARGA MODIFICADAS
 # ====================================================================
 
 def cargar_imagen(path, size=None, fallback_color=(80,80,80)):
-    # ** MODIFICACIÓN CLAVE: Llama a la función de PyInstaller **
-    ruta_a_cargar = _obtener_ruta_absoluta(path) 
-    
+    ruta_a_cargar = _obtener_ruta_absoluta(path)
     try:
-        # Usar la ruta absoluta
         img = pygame.image.load(ruta_a_cargar).convert_alpha()
         if size:
             img = pygame.transform.scale(img, size)
         return img
     except Exception:
-        # Fallback en caso de que la imagen no se encuentre o falle la carga
         s = pygame.Surface(size if size else (100,100))
         s.fill(fallback_color)
         return s
 
-# ---------- ANIMACIONES JUGADOR ----------
 def cargar_animaciones():
     animaciones = []
     for i in range(7):
-        # ** MODIFICACIÓN CLAVE: Construir la ruta y llamar a la función de PyInstaller **
         ruta_relativa = os.path.join(ASSETS, f"{i}-Photoroom.png")
         ruta_completa = _obtener_ruta_absoluta(ruta_relativa)
-
         try:
-            # Usar la ruta absoluta
             img = pygame.image.load(ruta_completa).convert_alpha()
             img = pygame.transform.scale(img, (110,130))
         except Exception:
@@ -78,12 +65,9 @@ def cargar_animaciones():
         animaciones.append(img)
     return animaciones
 
-
 # ====================================================================
-# [3] RESTO DEL CÓDIGO (COMO ESTABA ORIGINALMENTE)
+# [3] INICIALIZACIÓN DEL JUEGO
 # ====================================================================
-
-# Ahora todo este código funcionará porque `cargar_imagen` ya resuelve la ruta.
 
 try:
     animaciones = cargar_animaciones()
@@ -91,6 +75,7 @@ try:
     # ---------- INVENTARIO, UI, TIENDA ----------
     inventario = Inventario(capacidad=10)
     ui = UI(pos_x=50, pos_y=50)
+    notificaciones = SistemaNotificaciones()  # NUEVO: Sistema de notificaciones
 
     # Items (incluyen objetos que aumentan consumo)
     items_tienda = [
@@ -112,7 +97,6 @@ try:
         jugador.base_vel = getattr(jugador, "velocidad", 5)
 
     # ---------- FONDOS Y MAPA ----------
-    # ESTO YA FUNCIONA PORQUE cargar_imagen se encarga de la ruta:
     fondo_menu = cargar_imagen(os.path.join(ASSETS, "imagen_fondo_principal.jpg"), VALUES)
     fondo_nivel = cargar_imagen(os.path.join(ASSETS, "pueblo_del_roble.png"), (1900,1600))
     mapa_rect = fondo_nivel.get_rect()
@@ -137,8 +121,7 @@ try:
     fuente_hud = pygame.font.Font(None, 26)
     fuente_big = pygame.font.Font(None, 48)
 
-    # ---------- NPCs: Comerciante, Juan (consumista), Pedro (inversor), Juana (civil) ----------
-    # ESTO YA FUNCIONA PORQUE cargar_imagen se encarga de la ruta:
+    # ---------- NPCs ----------
     imagen_vendedor = cargar_imagen(os.path.join(ASSETS, "imagen_vendedor.png"), None)
     try:
         sprite_vendedor = pygame.transform.scale(imagen_vendedor, (100,120))
@@ -171,12 +154,10 @@ try:
                 return f"{self.name}: ¡Compra! Si no compras te quedas atrás."
             return f"{self.name}: Hola."
 
-    # ESTO YA FUNCIONA PORQUE cargar_imagen se encarga de la ruta:
     npc_juan_sprite = cargar_imagen(os.path.join(ASSETS, "cuphead.png"), size=(100, 100))
     npc_pedro_sprite = cargar_imagen(os.path.join(ASSETS, "pedro.png"), size=(100, 100))
     npc_juana_sprite = cargar_imagen(os.path.join(ASSETS, "betty.png"), size=(100, 100))
 
-    # Instancias
     comerciante = NPCSimple(600, 820, sprite_vendedor, name="Comerciante", role="vendedor")
     juan = NPCSimple(530, 460, npc_juan_sprite, name="Juan", role="consumista")
     pedro = NPCSimple(200, 600, npc_pedro_sprite, name="Pedro", role="inversor")
@@ -191,38 +172,33 @@ try:
     # ---------- CAMARA ----------
     camara = pygame.Vector2(0,0)
 
-    # ---------- TELEPORTS (inhabilitados) ----------
-    scenary_switch = None
-
     # ---------- HUD / NECESIDADES / CONSUMO / TIMERS / ECONOMIA ----------
     dinero = dinero_inicial
     alimentacion = 100.0
     recreacion = 100.0
-    consumo = 0.0 
+    consumo = 0.0
 
-    # timers
     tiempo_acum_necesidades = 0
     tiempo_acum_ingreso = 0
     INGRESO_INTERVAL_MS = 60_000
-    INGRESO_CANTIDAD = 10 
+    INGRESO_CANTIDAD = 10
 
-    # anuncios (spam)
-    # ESTO YA FUNCIONA PORQUE cargar_imagen se encarga de la ruta:
+    # anuncios
     ANUNCIOS_RUTAS = [
         os.path.join(ASSETS, "anuncio1.png"),
         os.path.join(ASSETS, "anuncio2.png"),
     ]
     ANUNCIOS = [cargar_imagen(p) for p in ANUNCIOS_RUTAS]
     ANUNCIO_INTERVAL_MS = 30_000
-    ANUNCIO_DURACION_MS = 5_000 
+    ANUNCIO_DURACION_MS = 5_000
     ultimo_anuncio_ts = pygame.time.get_ticks()
     anuncio_activo = False
     inicio_anuncio_ts = 0
     anuncio_actual = None
 
-    # economía global / estadísticas
-    economic_score = 0 
-    purchases_by_item = {} 
+    # economía global
+    economic_score = 0
+    purchases_by_item = {}
 
     # UI states
     inventario_abierto = False
@@ -281,7 +257,7 @@ try:
             tiempo_acum_necesidades += dt
             tiempo_acum_ingreso += dt
 
-            # Generar anuncio si aplica
+            # Generar anuncio
             if not anuncio_activo and ahora - ultimo_anuncio_ts >= ANUNCIO_INTERVAL_MS:
                 anuncio_actual = random.choice(ANUNCIOS) if ANUNCIOS else None
                 anuncio_activo = True
@@ -294,7 +270,7 @@ try:
                     pygame.quit()
                     sys.exit()
 
-                # Si game over: solo botones activos
+                # Game over: solo botones
                 if game_over:
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                         rx, ry = dibujar_gameover(screen)
@@ -308,7 +284,7 @@ try:
                             pygame.quit(); sys.exit()
                     continue
 
-                # Delegación de eventos a UI / tienda si abiertos
+                # Inventario abierto
                 if inventario_abierto:
                     handled = ui.handle_event_inventory(event, inventario)
                     if isinstance(handled, tuple):
@@ -322,9 +298,9 @@ try:
                             submenu_abierto = submenu
                     continue
 
+                # Tienda abierta
                 if tienda_abierta:
                     handled = tienda.handle_event(event, dinero, jugador, inventario)
-                    # tienda retorna (close, dinero_delta, consumo_delta, item_name)
                     if isinstance(handled, tuple):
                         close = handled[0]
                         dinero_delta = handled[1] if len(handled)>1 else 0
@@ -337,15 +313,12 @@ try:
                         if consumo_delta:
                             consumo = min(100.0, consumo + consumo_delta)
                         if item_name:
-                            # contabilizar compra para economía global
                             purchases_by_item[item_name] = purchases_by_item.get(item_name, 0) + 1
-                            # incrementar economic_score en 1 por compra (ajustable)
                             economic_score += 1
                     continue
 
                 # Teclas
                 if event.type == pygame.KEYDOWN:
-                    # debug toggle con P
                     if event.key == pygame.K_p:
                         sistema_col.toggle_debug()
                     if event.key == pygame.K_RETURN and estado_actual == MENU:
@@ -359,12 +332,11 @@ try:
                         submenu_abierto = False
 
                     if event.key == pygame.K_e and estado_actual == JUGANDO:
-                        # interactuar: vendedor o NPCs
                         # Vendedor
                         if jugador.rect.colliderect(comerciante.rect):
                             tienda_abierta = True
                         else:
-                            # otros NPCs
+                            # NPCs
                             for npc in npc_list:
                                 if jugador.rect.colliderect(npc.rect):
                                     resp = npc.responder(jugador, economic_score)
@@ -380,44 +352,109 @@ try:
                     if event.key == pygame.K_SPACE and dialogo_en_progreso and dialogo_activo:
                         dialogo_activo.siguiente_linea()
 
-                # clicks submenu usar/vender
+                # ============================================================
+                # FIX CRÍTICO: MANEJO SEGURO DE SUBMENU
+                # ============================================================
                 if submenu_abierto and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    mx,my = event.pos
-                    accion = ui.check_submenu_click(mx,my)
+                    mx, my = event.pos
+                    accion = ui.check_submenu_click(mx, my)
+                    
+                    print(f"[Main] Click en submenu: {accion} en ({mx}, {my})")
+                    
+                    if accion == "close":
+                        # Click fuera del submenu
+                        print("[Main] Cerrando submenu (click fuera)")
+                        submenu_abierto = False
+                        slot_seleccionado = None
+                        continue
+                    
                     if accion == "usar" and slot_seleccionado is not None:
-                        item = None
-                        try:
-                            item = inventario.contenido[slot_seleccionado]
-                        except Exception:
-                            item = None
-                        if item:
-                            efectos = getattr(item, "effect", {})
-                            alimentacion = min(100.0, alimentacion + efectos.get("alimentacion", 0))
-                            recreacion = min(100.0, recreacion + efectos.get("recreacion", 0))
-                            consumo = min(100.0, consumo + efectos.get("consumo", 0))
-                            inventario.usar_objeto(slot_seleccionado)
+                        # Validar índice
+                        if 0 <= slot_seleccionado < len(inventario.contenido):
+                            item = inventario.obtener_item(slot_seleccionado)
+                            
+                            if item:
+                                efectos = getattr(item, "effect", {})
+                                alimentacion = min(100.0, alimentacion + efectos.get("alimentacion", 0))
+                                recreacion = min(100.0, recreacion + efectos.get("recreacion", 0))
+                                consumo = min(100.0, consumo + efectos.get("consumo", 0))
+                                
+                                # USAR el objeto (lo elimina)
+                                item_usado = inventario.usar_objeto(slot_seleccionado)
+                                
+                                if item_usado:
+                                    print(f"[Main] ✓ Item usado: {item.name}")
+                                    print(f"[Main] ✓ Alimentación: {alimentacion}, Recreación: {recreacion}")
+                                    print(f"[Main] ✓ Items restantes: {len(inventario.contenido)}")
+                                    
+                                    # NUEVO: Notificación visual
+                                    notificaciones.agregar(f"Usaste: {item.name}", "success", 2000)
+                                
+                                # FIX: Cerrar submenu y deseleccionar
+                                submenu_abierto = False
+                                slot_seleccionado = None
+                                
+                                # FIX: NO cerrar inventario para que veas el cambio inmediato
+                                # inventario_abierto = False  # <- comentado para ver cambio
+                            else:
+                                print("[Main] ✗ Error: Item no encontrado")
+                                submenu_abierto = False
+                                slot_seleccionado = None
+                        else:
+                            print(f"[Main] ✗ Error: Slot inválido {slot_seleccionado}")
                             submenu_abierto = False
                             slot_seleccionado = None
+                    
                     elif accion == "vender" and slot_seleccionado is not None:
-                        item = None
-                        try:
-                            item = inventario.vender_objeto(slot_seleccionado)
-                        except Exception:
-                            item = None
-                        if item:
-                            precio = getattr(item, "price", 0)
-                            dinero += precio
+                        # Validar índice
+                        if 0 <= slot_seleccionado < len(inventario.contenido):
+                            item = inventario.obtener_item(slot_seleccionado)
+                            
+                            if item:
+                                precio = getattr(item, "price", 0)
+                                
+                                # VENDER el objeto (lo elimina)
+                                item_vendido = inventario.vender_objeto(slot_seleccionado)
+                                
+                                if item_vendido:
+                                    dinero += precio
+                                    print(f"[Main] ✓ Item vendido: {item_vendido.name} por ${precio}")
+                                    print(f"[Main] ✓ Dinero actual: ${dinero}")
+                                    print(f"[Main] ✓ Items restantes: {len(inventario.contenido)}")
+                                    
+                                    # NUEVO: Notificación visual
+                                    notificaciones.agregar(f"Vendiste: {item_vendido.name} (+${precio})", "success", 2000)
+                                
+                                # FIX: Cerrar submenu y deseleccionar
+                                submenu_abierto = False
+                                slot_seleccionado = None
+                                
+                                # FIX: NO cerrar inventario para que veas el cambio inmediato
+                                # inventario_abierto = False  # <- comentado para ver cambio
+                            else:
+                                print("[Main] ✗ Error: Item no encontrado")
+                                submenu_abierto = False
+                                slot_seleccionado = None
+                        else:
+                            print(f"[Main] ✗ Error: Slot inválido {slot_seleccionado}")
                             submenu_abierto = False
                             slot_seleccionado = None
+                    
+                    elif accion is None:
+                        # Click dentro del submenu pero no en botones
+                        pass
 
-            # ---------- LOGICA (si jugando y no gameover) ----------
+            # ---------- LOGICA ----------
             if estado_actual == JUGANDO and not game_over:
-                # velocidad penalizada por cantidad de objetos
+                # Actualizar notificaciones
+                notificaciones.actualizar()
+                
+                # Velocidad penalizada
                 n_items = len(inventario.contenido)
                 factor = max(0.3, 1.0 - 0.05 * n_items)
                 jugador.velocidad = jugador.base_vel * factor
 
-                # Movimiento (intenta pasar hitboxes)
+                # Movimiento
                 rect_prev = jugador.rect.copy()
                 try:
                     jugador.movimiento(hitboxes)
@@ -434,25 +471,23 @@ try:
                 jugador.eje_y = jugador.rect.y
                 jugador.rect.clamp_ip(mapa_rect)
 
-                # timers necesidades / ingreso
+                # Necesidades
                 if tiempo_acum_necesidades >= 8000:
                     alimentacion = max(0.0, alimentacion - 1.0)
                     recreacion = max(0.0, recreacion - 1.0)
                     tiempo_acum_necesidades = 0
 
+                # Ingreso pasivo
                 if tiempo_acum_ingreso >= INGRESO_INTERVAL_MS:
-                    # calcular ingreso pasivo afectado por economic_score (crisis)
                     ingreso_real = calcular_ingreso_pasivo(INGRESO_CANTIDAD, economic_score)
                     dinero += ingreso_real
                     tiempo_acum_ingreso = 0
 
-                # comprobar gameover
+                # Game over
                 if consumo >= 90.0:
                     game_over = True
 
             # ---------- RENDER ----------
-
-            # --- ACTUALIZACIÓN SUAVE DE CÁMARA (lerp) ---
             if estado_actual == JUGANDO:
                 objetivo_x = jugador.rect.centerx - VALUES[0] // 2
                 objetivo_y = jugador.rect.centery - VALUES[1] // 2
@@ -466,10 +501,8 @@ try:
                 screen.blit(fondo_menu, (0,0))
 
             elif estado_actual == JUGANDO:
-                # Fondo / mapa desplazado
                 screen.blit(fondo_nivel, (-camara.x, -camara.y))
 
-                # NPCs (comerciante dibujado separado por nombre)
                 try:
                     comerciante.dibujar(screen, camara)
                 except Exception:
@@ -477,7 +510,6 @@ try:
                 for npc in npc_list:
                     npc.dibujar(screen, camara)
 
-                # Jugador
                 try:
                     jugador.dibujar(screen, camara)
                 except Exception:
@@ -485,10 +517,9 @@ try:
                                      (jugador.rect.x - camara.x, jugador.rect.y - camara.y,
                                       jugador.rect.width, jugador.rect.height))
 
-                # Hitboxes debug
                 sistema_col.dibujar_debug(screen, camara)
 
-                # Indicador de interacción (tecla E)
+                # Indicador E
                 mostrar_e = False
                 if jugador.rect.colliderect(comerciante.rect.inflate(20,20)):
                     mostrar_e = True
@@ -503,7 +534,6 @@ try:
                     screen.blit(te, (jugador.rect.centerx - camara.x - 8,
                                      jugador.rect.top - 30 - camara.y))
 
-                # HUD
                 dibujar_hud(screen)
 
             # Interfaces
@@ -522,8 +552,11 @@ try:
                 dialogo_activo.dibujar(screen)
                 if not dialogo_activo.en_dialogo:
                     dialogo_en_progreso = False
+            
+            # NUEVO: Notificaciones (encima de diálogos)
+            notificaciones.dibujar(screen)
 
-            # Anuncio (encima de todo)
+            # Anuncio
             if anuncio_activo and anuncio_actual:
                 ax = VALUES[0]//2 - anuncio_actual.get_width()//2
                 ay = VALUES[1]//2 - anuncio_actual.get_height()//2
@@ -532,7 +565,7 @@ try:
                     anuncio_activo = False
                     anuncio_actual = None
 
-            # Game over overlay (final)
+            # Game over
             if game_over:
                 dibujar_gameover(screen)
 
@@ -541,25 +574,15 @@ try:
     if __name__ == "__main__":
         main_loop()
 
-# ====================================================================
-# [4] BLOQUE DE CIERRE Y MANEJO DE ERRORES (Anti-Ventana Intermitente)
-# ====================================================================
-
 except Exception as e:
-    # Este bloque solo se ejecuta si un error CRÍTICO (como FileNotFoundError) 
-    # ocurrió en el código fuera del bucle principal.
-    
     print("\n\n#####################################################")
     print("## ERROR CRÍTICO: FALLO AL INICIAR LA APLICACIÓN ##")
     print("#####################################################")
     print(f"Error específico: {e}\n")
-    
-    traceback.print_exc() 
-    
+    traceback.print_exc()
     print("\n--- PASO CLAVE ---")
     print("El error anterior indica que un archivo no se encontró.")
     print("Asegúrate de compilar con: pyinstaller --onefile --console --add-data 'assets;assets' src/python/pruebas_main.py")
     print("------------------")
-    
-    input("Presiona ENTER para cerrar la ventana y salir...") 
+    input("Presiona ENTER para cerrar la ventana y salir...")
     sys.exit(1)
