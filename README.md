@@ -1,67 +1,40 @@
-# 🌴 El Lado Oscuro del Carrito
+# 🛒 El Lado Oscuro del Carrito (ELOC)
 
-Un juego en **Python + Pygame** con lógica base en **C++ (Pybind11)**.  
-El jugador explora una isla, interactúa con NPCs y realiza misiones relacionadas con el cuidado del medio ambiente.  
+El Lado Oscuro del Carrito es Videojuego planificado, desarrollado y bajo la visión de Edy Santiago Ávila, Samuel Buitrago y Ferndanda Becerra.
 
----
+Su finalidad es un producto cuyo objetivo es enseñar acerca de las implicaciones y daños del consumismo. Para ello se cuenta con diversidad de mecanicas cuyo objetivo es concientizar la diferencia del Deseo frente a la Necesidad.
 
-## 🎮 Características
-- **Jugador (Protagonista)** con movimiento libre en escenarios.  
-- **NPCs dinámicos** que pueden seguir al jugador o asignar misiones.  
-- **Sistema de misiones**: recoger basura, interactuar con personajes, obtener recompensas.  
-- **Economía simple**: el dinero ganado se usa para progresar y mejorar el entorno.  
-- **Foco temático**: concientizar sobre el **consumismo** y la importancia del reciclaje.  
+## 💻 Version actual del Software 
 
----
+- Versión 0.3 (Pre-Alpha)
 
-## 🛠️ Tecnologías
-- **C++** → Lógica de personaje y economía.  
-- **Pybind11** → Exposición de clases y métodos de C++ a Python.  
-- **Python (Pygame)** → Motor del juego, gráficos, NPCs y jugabilidad.  
+## 🟢 Proceso de Instalación
 
----
+Para iniciar el juego,busque el ejecutable en alguna de las carpetas del nucleo del peoyecto. Una vez alli,copie el .exe en el directorio que quiera y ejecute la app
 
-## 📂 Estructura del proyecto
-```
-├── src
-│   ├── cpp/              # Código C++ base
-│   ├── bindings/         # Pybind11 bindings
-│   ├── include/          # Headers C++
-│   └── python/           # Lógica principal del juego (Pygame)
-│
-├── assets/               # Sprites y fondos
-└── README.md             # Este archivo
-```
+## ⚠️ PRODUCTO SOLO DISPONIBLE EN WINDOWS ⚠️
 
----
 
-## 🚀 Ejecución
-1. Compilar el módulo de C++ con CMake:
-   ```bash
-   cmake --build . --config Release
-   ```
-2. Ejecutar el juego desde Python:
-   ```bash
-   python src/python/pruebas_main.py
-   ```
+## 🖥 Desarrollo del Software 🖥
 
----
+- Para desarrollar el Software,como equipo hemos optado por usar el lenguaje de programación Python, con el modulo de PyGame. En busqueda de la optimizacion del Software y por motivos de comodidad del equipo, se combino con C++ con transferencia de datos mediante el Binding Pybind11 (creditos a los desarrolladores de Pybind11 por disponer publicamente el binding, gracias por dicho producto).
 
-## 🎯 Objetivo del juego
-El jugador debe explorar la isla, recoger basura y completar misiones para obtener dinero.  
-El dinero no está pensado para el consumismo, sino para **restaurar y mejorar el entorno**.  
+En apartados de desarrollo, se trabaja bajo el Paradigma Orientado a Objetos y la Programacion modular.
 
-El mensaje principal:  
-> “El consumo sin propósito no trae progreso real. La sostenibilidad sí.”  
+El funcionamiento lógico del proyecto y lo que permite que el juego funcione esta programado en C++, mientras que las interfaces y el lugar donde vive el Videojuego, esta programado en Python, trayendo las funcionalidades de C++
 
----
+## 🏅 Para Terminar 🏅
 
-## 📌 Futuro
-- Misiones más variadas.  
-- Varios escenarios explorables.  
-- Mejoras visuales (sprites con transparencia, animaciones).  
-- Sistema de decisiones con impacto ambiental.  
+Este Software no es completamente trabajo humano, ciertas partes del codigo, como aplicacion de interfaces y su programacion, fueron programadas por IA Generativa
 
----
+Este Software recibirá como última actualización la Versión 0.4 (Pre-Alpha) hasta nuevo aviso. 
 
-👨‍💻 **Autor:** Proyecto académico en desarrollo.  
+
+## 🚀 El Futuro
+
+El Lado Oscuro del Carrito esta lejos de terminar, pero debido a la complejidad de su desarrollo y a la inexperiencia del equipo no será posible continuarlo, hasta que la práctica nos de la razón, el desarrollo del proyecto será pausado indefinidamente.
+
+ELOC recibira una refactorización durante el primer trimestre de 2026, siendo este el fin del Softeare como lo conocemos ahora.
+
+
+#No siendo más... Edy Ávila (Sņť) y Samuel Buitrago (Luvrom)
