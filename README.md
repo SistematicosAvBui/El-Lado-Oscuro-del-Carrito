@@ -10,7 +10,7 @@ Su finalidad es un producto cuyo objetivo es enseñar acerca de las implicacione
 
 ## 🟢 Proceso de Instalación
 
-Para iniciar el juego,busque el ejecutable en alguna de las carpetas del nucleo del peoyecto. Una vez alli,copie el .exe en el directorio que quiera y ejecute la app
+Para iniciar el juego,busque el ejecutable en alguna de las carpetas del nucleo del proyecto. Una vez alli,copie el .exe en el directorio que quiera y ejecute la app
 
 ## ⚠️ PRODUCTO SOLO DISPONIBLE EN WINDOWS ⚠️
 
