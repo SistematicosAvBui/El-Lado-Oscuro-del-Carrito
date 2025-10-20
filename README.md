@@ -37,4 +37,4 @@ El Lado Oscuro del Carrito esta lejos de terminar, pero debido a la complejidad 
 ELOC recibira una refactorización durante el primer trimestre de 2026, siendo este el fin del Softeare como lo conocemos ahora.
 
 
-#No siendo más... Edy Ávila (Sņť) y Samuel Buitrago (Luvrom)
+##No siendo más... Edy Ávila (Sņť) y Samuel Buitrago (Luvrom)
