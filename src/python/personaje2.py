@@ -1,16 +1,24 @@
 import pygame
 from compilados_py.Release import personaje as per
-
 class Protagonista (per.Personaje):
     #Clase que se encarga de generar el personaje jugable:
     #Recibe movimiento, dinero, imagen de Sprite, posicion en X y Y, Velocidad
-    def __init__ (self, movimiento, dinero, animaciones, eje_x, eje_y, velocidad):
+    def __init__ (self, movimiento, dinero, animaciones, eje_x, eje_y, velocidad, inventario):
         super().__init__(movimiento, dinero)
         self.eje_x = eje_x
         self.eje_y = eje_y
         self.velocidad = velocidad
         self.flip_x = False
         self.flip_y = False
+        self.inventario = inventario
+        self.estados = { "recreacion" : 100,
+                         "alimentacion" : 100, 
+                         "aceptacion_social": 100,  
+        }
+        self.minimalista = False
+        
+        # Rectángulo de colisión del jugador
+        self.rect = pygame.Rect(eje_x, eje_y, 80, 120)
         
         # Sistema de animaciones
         self.animaciones = animaciones
@@ -52,9 +60,13 @@ class Protagonista (per.Personaje):
             return self.animaciones[frame_list[self.frame_index]]
         return self.animaciones[0]  # Frame por defecto
 
-    def movimiento (self):
+    def movimiento (self, obstaculos=None):
         teclas = pygame.key.get_pressed()
         current_direction = "idle"
+        
+        # Guardar posición actual
+        old_x = self.eje_x
+        old_y = self.eje_y
         
         # Detectar dirección de movimiento
         if teclas[pygame.K_w]:
@@ -72,19 +84,66 @@ class Protagonista (per.Personaje):
             self.flip_x = False
             current_direction = "right"
         
+        # Actualizar rectángulo de colisión
+        self.rect.x = self.eje_x
+        self.rect.y = self.eje_y
+        
+        # Verificar colisiones si se proporcionan obstáculos
+        if obstaculos:
+            for obstaculo in obstaculos:
+                if self.rect.colliderect(obstaculo):
+                    # Revertir movimiento si hay colisión
+                    self.eje_x = old_x
+                    self.eje_y = old_y
+                    self.rect.x = self.eje_x
+                    self.rect.y = self.eje_y
+                    break
+        
         # Cambiar animación según la dirección
         self.set_animation(current_direction)
         
         # Actualizar animación
         self.update_animation()
 
-    def dibujar (self, interfaz):
+
+    def cambio_necesidades (self):
+        tiempo_actual = pygame.time.get_ticks()
+        if tiempo_actual - self.last_update >= 10000:
+            for nombre_estado, valor_estado in self.estados.items():
+                self.estados[nombre_estado] -= 1
+
+            
+    def abribr_inventario (self, inventario, surface, interfaz):
+        key = pygame.key.get_pressed()
+        if key[pygame.K_m]:
+            inventario.abrir_inventario(surface, interfaz)
+
+
+    def dibujar(self, interfaz, camara):
         current_frame = self.get_current_frame()
-        
+    
         # Aplicar flip horizontal para las animaciones de izquierda
         if self.current_animation == "left":
             imagen_flip = pygame.transform.flip(current_frame, True, self.flip_y)
         else:
             imagen_flip = pygame.transform.flip(current_frame, self.flip_x, self.flip_y)
-            
-        interfaz.blit(imagen_flip, (self.eje_x, self.eje_y))
+        
+        interfaz.blit(imagen_flip, (self.rect.x - camara.x, self.rect.y - camara.y))
+
+
+class NPC (per.Personaje):
+    #clase que crea un NPC
+    def __init__ (self, movimiento, dinero, eje_x, eje_y, dialogos, sprite):
+        super().__init__(movimiento, dinero)
+        self.eje_x = eje_x
+        self.eje_y = eje_y
+        self.dialogos = dialogos
+        self.sprite = sprite
+        self.rect = self.sprite.get_rect(topleft = (eje_x, eje_y))
+
+    def dialogo (self, dialogo, entrada, personaje):
+        if (entrada[pygame.K_e]) and (self.rect.colliderect(personaje.rect)):
+            pass
+
+    def dibujar (self, surface):
+        surface.blit(self.sprite, self.rect)
